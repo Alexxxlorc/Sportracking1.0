@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_green">#0B6E4F</color>
-    <color name="primary_green_dark">#084C3B</color>
-    <color name="gold_accent">#C9A227</color>
-    <color name="background_light">#F5F7F6</color>
-    <color name="input_background">#F1F3F2</color>
-    <color name="divider_color">#D9DDDB</color>
-    <color name="text_secondary">#6E7B76</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+    <color name="primary_red">#B71C1C</color>        <!-- rojo principal -->
+    <color name="red_dark">#7F0000</color>           <!-- encabezado -->
+    <color name="red_light">#F44336</color>          <!-- acento -->
+    <color name="background_light">#F5F5F5</color>   <!-- fondo -->
+    <color name="card_white">#FFFFFF</color>         <!-- contenedor -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
 </resources>
