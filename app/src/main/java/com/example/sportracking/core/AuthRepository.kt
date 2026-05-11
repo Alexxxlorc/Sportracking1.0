@@ -31,10 +31,10 @@ class AuthRepository(): Authentication {
             return@withContext ResponseService.Error("Correo o Contraseña incorrectos")
 
         } catch (e: FirebaseAuthException) {
-            return@withContext ResponseService.Error(e.localizedMessage)
+            return@withContext ResponseService.Error(e.localizedMessage ?: "Error de autenticación")
 
         } catch (e: Exception) {
-            return@withContext ResponseService.Error("Error inesperado, inténtalo más tarde")
+            return@withContext ResponseService.Error("Error inesperado: ${e.message}")
         }
     }
     override suspend fun requestSignUp(
