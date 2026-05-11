@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "920761428019",
+    "project_id": "sportracking-ebb4d",
+    "storage_bucket": "sportracking-ebb4d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920761428019:android:5a5a01f965b26d8c339b46",
+        "android_client_info": {
+          "package_name": "com.example.sportracking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCHFyaoXDsMWyodKQsUOfla5aA-hUzJwk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

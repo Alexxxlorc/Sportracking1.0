@@ -1,4 +1,4 @@
-package com.example.sportracking
+package onboarding
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import com.example.sportracking.R
 import com.example.sportracking.core.FragmentCommunicator
 import com.example.sportracking.databinding.ActivityMainBinding
 
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity(), FragmentCommunicator {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.loaderView.isVisible = false
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity(), FragmentCommunicator {
         }
     }
 
-    // 3. Implementamos la función del comunicador que pide el profe
+    // 3. Implementamos la función del comunicador
     override fun manageLoader(isVisible: Boolean) {
         binding.loaderView.isVisible = isVisible
     }

@@ -1,59 +1,62 @@
 package com.example.sportracking
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
+import com.example.sportracking.databinding.FragmentRecuperacionBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Recuperacionfragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Recuperacionfragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentRecuperacionBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recuperacionfragment, container, false)
+    ): View {
+        // Usamos el nombre exacto de tu XML para inflar la vista
+        _binding = FragmentRecuperacionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Recuperacionfragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Recuperacionfragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Configuración del botón regresar
+        binding.Regresar.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        setupValidation()
+
+        // Acción al enviar el correo
+        binding.botonEnviar.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            Toast.makeText(requireContext(), "Instrucciones enviadas a $email", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupValidation() {
+        binding.botonEnviar.isEnabled = false
+
+        // Escuchamos los cambios en el campo de email
+        binding.etEmail.addTextChangedListener {
+            val email = it.toString().trim()
+            val isValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+
+            // Mostramos el error en el Layout (tilEmail)
+            binding.tilEmail.error = if (email.isEmpty() || isValid) null else "Correo inválido"
+            binding.botonEnviar.isEnabled = isValid
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
