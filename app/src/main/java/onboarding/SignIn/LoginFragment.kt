@@ -1,21 +1,22 @@
-package com.example.sportracking
+package onboarding.SignIn
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.sportracking.R
 import com.example.sportracking.core.FragmentCommunicator
 import com.example.sportracking.databinding.FragmentLoginBinding
-
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    //private val viewModel by viewModels<SignInViewModel>()
+    private val viewModel by viewModels<SignInViewModel>()
     private lateinit var communicator: FragmentCommunicator
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +31,9 @@ class LoginFragment : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         communicator = requireActivity() as FragmentCommunicator
         setupValidation()
-        communicator.manageLoader(true)
+        binding.btnLogin.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
         binding.btnRegister.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
@@ -38,7 +41,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun setupValidation() {
-        binding.btnRegister.isEnabled = false
+        binding.btnLogin.isEnabled = false
 
         binding.etCorreo.addTextChangedListener {
             validateFields()
@@ -55,20 +58,14 @@ class LoginFragment : Fragment() {
         val isEmailValid = isValidEmail(email)
         val isPasswordValid = password.length >= 8
 
-        // Aquí usé tus IDs de los campos de texto
         binding.etCorreo.error = if (email.isNotEmpty() && isEmailValid) null else "Correo invalido"
         binding.etPassword.error = if (password.isNotEmpty() && isPasswordValid) null else "Minimo 8 caracteres"
 
-        binding.btnRegister.isEnabled =
+        binding.btnLogin.isEnabled =
             email.isNotEmpty() && password.isNotEmpty() && isEmailValid && isPasswordValid
     }
 
     private fun isValidEmail(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }

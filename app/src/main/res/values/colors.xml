@@ -7,4 +7,7 @@
     <color name="card_white">#FFFFFF</color>         <!-- contenedor -->
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#757575</color>
+    <color name="primary_green">#4CAF50</color>
+    <color name="primary_green_dark">#2E7D32</color>
+    <color name="gold_accent">#FFD700</color>
 </resources>
