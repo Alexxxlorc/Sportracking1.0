@@ -11,41 +11,47 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:background="@color/red_dark"
-        android:padding="16dp"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bg_header_gradient"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="48dp"
+        android:paddingBottom="40dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.50">
+        app:layout_constraintHeight_percent="0.42">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="84dp"
-            android:layout_height="80dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/chatgpt_image_6_abr_2026__17_59_13" />
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_logo_frame"
+            android:padding="6dp"
+            android:src="@drawable/chatgpt_image_6_abr_2026__17_59_13"
+            android:elevation="6dp"
+            android:contentDescription="Logo Sportracking" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="¡Bienvenido!"
             android:textColor="@android:color/white"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.02" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:text="Inicia sesión para continuar"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textColor="#E6FFFFFF"
+            android:textSize="15sp" />
 
     </LinearLayout>
 
@@ -54,6 +60,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:clipToPadding="false"
+        android:background="@color/background_light"
         app:layout_constraintTop_toBottomOf="@id/layoutHeader"
         app:layout_constraintBottom_toTopOf="@id/layoutLinks"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,43 +72,55 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/background_light"
-            android:padding="16dp">
+            android:background="@drawable/bg_card_form"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="16dp"
+            android:layout_marginTop="-24dp"
+            android:elevation="4dp">
 
             <EditText
                 android:id="@+id/etCorreo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@android:color/white"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_edit_text"
                 android:hint="Correo"
-                android:padding="12dp" />
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
+                android:inputType="textEmailAddress"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp" />
 
             <EditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@android:color/white"
+                android:background="@drawable/bg_edit_text"
                 android:hint="Contraseña"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
                 android:inputType="textPassword"
-                android:padding="12dp" />
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp" />
 
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:backgroundTint="@color/primary_red"
+                android:layout_height="54dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_button_primary"
+                android:backgroundTint="@null"
                 android:text="Ingresar"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"
+                android:stateListAnimator="@null"
+                android:elevation="2dp" />
 
         </LinearLayout>
     </ScrollView>

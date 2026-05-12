@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_red">#B71C1C</color>        <!-- rojo principal -->
-    <color name="red_dark">#7F0000</color>           <!-- encabezado -->
-    <color name="red_light">#F44336</color>          <!-- acento -->
-    <color name="background_light">#F5F5F5</color>   <!-- fondo -->
+    <color name="primary_red">#D32F2F</color>        <!-- rojo principal -->
+    <color name="red_dark">#8B0000</color>           <!-- encabezado -->
+    <color name="red_darker">#5C0000</color>         <!-- gradiente fin -->
+    <color name="red_light">#FF5252</color>          <!-- acento -->
+    <color name="background_light">#F7F7FA</color>   <!-- fondo -->
     <color name="card_white">#FFFFFF</color>         <!-- contenedor -->
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#6B6B6B</color>
+    <color name="text_hint">#9E9E9E</color>
+    <color name="input_stroke">#E0E0E0</color>
+    <color name="input_background">#FFFFFF</color>
     <color name="primary_green">#4CAF50</color>
     <color name="primary_green_dark">#2E7D32</color>
     <color name="gold_accent">#FFD700</color>
+    <color name="bottom_nav_inactive">#9E9E9E</color>
 </resources>
