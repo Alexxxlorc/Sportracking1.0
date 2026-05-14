@@ -1,60 +1,230 @@
 package home.account
 
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.sportracking.R
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.sportracking.databinding.FragmentAccountBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import onboarding.MainActivity
+import onboarding.personal.model.UserProfile
+import java.net.URL
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AccountFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private var _binding: FragmentAccountBinding? = null
+    private val binding get() = _binding!!
+
+    private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
+
+    // Photo Picker — selector de imagen del sistema (Android 13+ con backport)
+    private val pickImage = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) uploadProfilePhoto(uri)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false)
+    ): View {
+        _binding = FragmentAccountBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AccountFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        loadUserData()
+
+        binding.btnEditPhoto.setOnClickListener {
+            pickImage.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }
+
+        binding.btnLogout.setOnClickListener {
+            confirmLogout()
+        }
+    }
+
+
+
+    private fun loadUserData() {
+        val currentUser = auth.currentUser ?: return
+
+        binding.tvEmail.text = currentUser.email ?: "—"
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val snapshot = firestore.collection("users")
+                    .document(currentUser.uid)
+                    .get()
+                    .await()
+
+                val profile = snapshot.toObject(UserProfile::class.java)
+
+                if (profile != null) {
+                    fillProfileFields(profile)
+                    if (profile.photoUrl.isNotBlank()) {
+                        loadProfilePhoto(profile.photoUrl)
+                    }
+                } else {
+                    showEmptyProfile()
+                }
+            } catch (e: Exception) {
+                showEmptyProfile()
+            }
+        }
+    }
+
+    private fun fillProfileFields(profile: UserProfile) {
+        val fullName = listOf(
+            profile.firstName,
+            profile.middleName,
+            profile.lastNamePaternal,
+            profile.lastNameMaternal
+        ).filter { it.isNotBlank() }.joinToString(" ")
+
+        binding.tvFullName.text = if (fullName.isNotBlank()) fullName else "Usuario"
+        binding.tvInitials.text = buildInitials(profile.firstName, profile.lastNamePaternal)
+        binding.tvUserHandle.text =
+            if (profile.userName.isNotBlank()) "@${profile.userName}" else ""
+
+        binding.tvUserName.text =
+            if (profile.userName.isNotBlank()) profile.userName else "—"
+        binding.tvPhone.text =
+            if (profile.phone.isNotBlank()) profile.phone else "—"
+        binding.tvBirthDate.text =
+            if (profile.birthDate.isNotBlank()) profile.birthDate else "—"
+    }
+
+    private fun showEmptyProfile() {
+        binding.tvFullName.text = "Usuario"
+        binding.tvInitials.text = "?"
+        binding.tvUserHandle.text = ""
+        binding.tvUserName.text = "—"
+        binding.tvPhone.text = "—"
+        binding.tvBirthDate.text = "—"
+    }
+
+    private fun buildInitials(firstName: String, lastName: String): String {
+        val first = firstName.firstOrNull()?.uppercaseChar()
+        val last = lastName.firstOrNull()?.uppercaseChar()
+        return when {
+            first != null && last != null -> "$first$last"
+            first != null -> first.toString()
+            else -> "?"
+        }
+    }
+
+
+
+    private fun loadProfilePhoto(url: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val bitmap = withContext(Dispatchers.IO) {
+                runCatching {
+                    URL(url).openStream().use { BitmapFactory.decodeStream(it) }
+                }.getOrNull()
+            }
+            if (bitmap != null && _binding != null) {
+                binding.ivProfilePhoto.setImageBitmap(bitmap)
+                binding.ivProfilePhoto.isVisible = true
+                binding.tvInitials.isVisible = false
+            }
+        }
+    }
+
+    private fun uploadProfilePhoto(uri: Uri) {
+        val currentUser = auth.currentUser ?: return
+
+        // Mostrar la foto seleccionada inmediatamente (preview optimista)
+        binding.ivProfilePhoto.setImageURI(uri)
+        binding.ivProfilePhoto.isVisible = true
+        binding.tvInitials.isVisible = false
+        binding.photoProgress.isVisible = true
+        binding.btnEditPhoto.isEnabled = false
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // 1) Subir bytes a Firebase Storage
+                val ref = storage.reference
+                    .child("users")
+                    .child(currentUser.uid)
+                    .child("profile.jpg")
+
+                ref.putFile(uri).await()
+
+                // 2) Obtener URL pública
+                val downloadUrl = ref.downloadUrl.await().toString()
+
+                // 3) Guardar URL en Firestore
+                firestore.collection("users")
+                    .document(currentUser.uid)
+                    .update("photoUrl", downloadUrl)
+                    .await()
+
+                if (_binding != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Foto actualizada",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (e: Exception) {
+                if (_binding != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "No se pudo subir la foto: ${e.localizedMessage}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            } finally {
+                if (_binding != null) {
+                    binding.photoProgress.isVisible = false
+                    binding.btnEditPhoto.isEnabled = true
                 }
             }
+        }
+    }
+
+
+    private fun confirmLogout() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Cerrar sesión")
+            .setMessage("¿Seguro que quieres cerrar sesión?")
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Cerrar sesión") { _, _ -> logout() }
+            .show()
+    }
+
+    private fun logout() {
+        auth.signOut()
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

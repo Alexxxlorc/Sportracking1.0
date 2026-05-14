@@ -8,5 +8,6 @@ data class UserProfile(
     val lastNameMaternal: String = "",
     val userName: String = "",
     val phone: String = "",
-    val birthDate: String = ""
+    val birthDate: String = "",
+    val photoUrl: String = ""
 )
